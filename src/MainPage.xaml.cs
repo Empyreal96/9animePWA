@@ -325,5 +325,21 @@ namespace _9Anime_PWA
                 CustErr.ShowAsync();
             }
         }
+        bool IsHoldingPressed = false;
+        private void BookmarksList_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+           // IsHoldingPressed = true;
+            BookmarkRightClick.ShowAt(MainView, e.GetPosition(MainView));
+            //IsHoldingPressed = false;
+           // BookmarkFlyout.ShowAt(BookmarkButton);
+        }
+
+        private void BookmarkFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+        {
+            /*if (IsHoldingPressed == true)
+            {
+                args.Cancel = true;
+            }*/
+        }
     }
 }

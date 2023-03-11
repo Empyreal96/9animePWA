@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugEngines>
+    </DebugEngines>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <BackgroundTaskDebugEngines>
+    </BackgroundTaskDebugEngines>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Source>C:\Users\Empyreal96\Downloads\faviconV2-removebg-preview.png</Source>
+    <SmallTileSource>C:\Users\Empyreal96\Downloads\faviconV2-removebg-preview.png</SmallTileSource>
+    <MediumTileSource>C:\Users\Empyreal96\Downloads\faviconV2-removebg-preview.png</MediumTileSource>
+    <WideTileSource>C:\Users\Empyreal96\Downloads\faviconV2-removebg-preview.png</WideTileSource>
+    <LargeTileSource>C:\Users\Empyreal96\Downloads\faviconV2-removebg-preview.png</LargeTileSource>
+    <AppIconSource>C:\Users\Empyreal96\Downloads\faviconV2-removebg-preview.png</AppIconSource>
+    <SplashScreenSource>C:\Users\Empyreal96\Downloads\faviconV2-removebg-preview.png</SplashScreenSource>
+    <PackageLogoSource>C:\Users\Empyreal96\Downloads\faviconV2-removebg-preview.png</PackageLogoSource>
+    <UapAppxPackageBuildMode>SideloadOnly</UapAppxPackageBuildMode>
+    <AppxShowAllApps>False</AppxShowAllApps>
+    <AppxBuildConfigurationSelection>x86|x64|arm</AppxBuildConfigurationSelection>
+    <PackageOptionalProjectsInIdeBuilds>True</PackageOptionalProjectsInIdeBuilds>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <DeviceId>30f105c9-681e-420b-a277-7c086ead8a4e</DeviceId>
+    <UseEmulator>true</UseEmulator>
+  </PropertyGroup>
+</Project>

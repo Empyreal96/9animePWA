@@ -9,7 +9,7 @@
   <Identity
     Name="9Anime"
     Publisher="CN=Empyreal96"
-    Version="1.0.1.0" />
+    Version="1.0.1.3" />
 
   <mp:PhoneIdentity PhoneProductId="493b1a9a-561f-4bab-ac7c-db096dec0573" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
