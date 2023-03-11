@@ -1,7 +1,9 @@
 ﻿<Application
-    x:Class="_9anime.App"
+    x:Class="_9Anime_PWA.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:_9anime">
-
+    xmlns:local="using:_9Anime_PWA">
+    <Application.Resources>
+        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+    </Application.Resources>
 </Application>

@@ -1,15 +1,52 @@
 ﻿<Page
-    x:Class="_9anime.MainPage"
+    x:Class="_9Anime_PWA.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:_9anime"
+    xmlns:local="using:_9Anime_PWA"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <Flyout x:Name="BookmarkFlyout">
+            <RelativePanel MaxWidth="300">
+                <TextBlock x:Name="DocumentTitleBox" RelativePanel.AlignLeftWithPanel="True" ScrollViewer.HorizontalScrollMode="Enabled" MaxWidth="350" RelativePanel.AlignRightWithPanel="True" Margin="0,0,0,5"/>
+                <Button x:Name="AddBookmarkBtn" RelativePanel.Below="DocumentTitleBox" Click="AddBookmarkBtn_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Add" Margin="0,0,5,0"/>
+                        <TextBlock Text="Bookmark"/>
+                    </StackPanel>
+                </Button>
+                <TextBox x:Name="CurrentUrlBox" Text="{Binding Path=CurrentUrl, Mode=OneWay}" IsReadOnly="True" BorderBrush="Transparent" Background="Transparent" RelativePanel.AlignRightWith="DocumentTitleBox" RelativePanel.Below="DocumentTitleBox" RelativePanel.RightOf="AddBookmarkBtn" RelativePanel.AlignRightWithPanel="True" Margin="5,0,0,0"/>
+                <ListView x:Name="BookmarksList" ItemClick="BookmarksList_ItemClick" RightTapped="BookmarksList_RightTapped" IsItemClickEnabled="true" RelativePanel.Below="CurrentUrlBox" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding WebpageTitle, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem x:Name="DeleteBookmark" Text="Remove" Click="DeleteBookmark_Click"/>
+                        </MenuFlyout>
+                    </ListView.ContextFlyout>
+                </ListView>
+            </RelativePanel>
+        </Flyout>
+    </Page.Resources>
 
-    <Grid>
-        <WebView x:Name="MainView" Source="https:\\9anime.me" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+    <Grid  >
 
+
+
+
+        <WebView x:Name="MainView" Source="https:\\9anime.me" FrameNavigationCompleted="MainView_FrameNavigationCompleted"  NavigationStarting="MainView_NavigationStarting" ContainsFullScreenElementChanged="MainView_ContainsFullScreenElementChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Button x:Name="BookmarkButton" Flyout="{x:Bind BookmarkFlyout}" VerticalAlignment="Bottom" BorderBrush="Transparent" Margin="10,0,0,10">
+            <Button.Background>
+                <SolidColorBrush Color="Gray" Opacity="0.3"/>
+            </Button.Background>
+            <SymbolIcon Symbol="Bookmarks"></SymbolIcon>
+        </Button>
+
+        <ProgressBar x:Name="ProgBar" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="5" IsIndeterminate="True" Visibility="Collapsed"/>
     </Grid>
 </Page>
