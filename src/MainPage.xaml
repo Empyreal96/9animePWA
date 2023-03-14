@@ -18,11 +18,11 @@
                     </StackPanel>
                 </Button>
                 <TextBox x:Name="CurrentUrlBox" Text="{Binding Path=CurrentUrl, Mode=OneWay}" IsReadOnly="True" BorderBrush="Transparent" Background="Transparent" RelativePanel.AlignRightWith="DocumentTitleBox" RelativePanel.Below="DocumentTitleBox" RelativePanel.RightOf="AddBookmarkBtn" RelativePanel.AlignRightWithPanel="True" Margin="5,0,0,0"/>
-                <ListView x:Name="BookmarksList" ItemClick="BookmarksList_ItemClick" RightTapped="BookmarksList_RightTapped" Holding="BookmarksList_Holding" IsHoldingEnabled="True" IsItemClickEnabled="true" RelativePanel.Below="CurrentUrlBox" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                <ListView x:Name="BookmarksList" ItemClick="BookmarksList_ItemClick" IsHoldingEnabled="True" IsItemClickEnabled="true" RelativePanel.Below="CurrentUrlBox" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
                    
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding WebpageTitle, Mode=OneWay}"/>
+                            <TextBlock Text="{Binding WebpageTitle, Mode=OneWay}" Holding="BookmarkItem_Holding" RightTapped="BookmarkItem_RightTapped"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                     <ListView.ContextFlyout>

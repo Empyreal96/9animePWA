@@ -190,11 +190,13 @@ namespace _9Anime_PWA
             }
 
         }
+        string Title;
+        string PageUrl;
         private void BookmarksList_ItemClick(object sender, ItemClickEventArgs e)
         {
             selectedIndex = BookmarksList.SelectedIndex;
-            string Title = (e.ClickedItem as PageInfo).WebpageTitle;
-            string PageUrl = (e.ClickedItem as PageInfo).WebpageUrl;
+         Title = (e.ClickedItem as PageInfo).WebpageTitle;
+            PageUrl = (e.ClickedItem as PageInfo).WebpageUrl;
 
             MainView.Navigate(new Uri(PageUrl));
         }
@@ -299,10 +301,56 @@ namespace _9Anime_PWA
 
 
         int selectedIndex;
-        private void BookmarksList_RightTapped(object sender, RightTappedRoutedEventArgs e)
+       
+
+        private async void BookmarkItem_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            //selectedIndex = BookmarksList.SelectedIndex;
+            FrameworkElement senderElement = sender as FrameworkElement;
+            BookmarksList.SelectedItem = senderElement.DataContext;
+
+            selectedIndex = BookmarksList.SelectedIndex;
+
+            var test = BookmarksList.SelectedItem as PageInfo;
+
+
+            MessageDialog dialog = new MessageDialog($"{test.WebpageTitle}\n\nRemove this bookmark?");
+            dialog.Commands.Add(new UICommand("Yes", null));
+            dialog.Commands.Add(new UICommand("No", null));
+            dialog.DefaultCommandIndex = 0;
+            dialog.CancelCommandIndex = 1;
+            var cmd = await dialog.ShowAsync();
+
+            if (cmd.Label == "Yes")
+            {
+
+                DeleteBookmark_Click();
+            }
         }
+
+      
+
+        private void DeleteBookmark_Click()
+        {
+            try
+            {
+                BookmarksList.Items.RemoveAt(selectedIndex);
+
+                SavedBookmarks.Clear();
+                foreach (PageInfo item in BookmarksList.Items)
+                {
+                    SavedBookmarks.Add(item);
+                }
+
+                SaveBookmarks();
+            }
+            catch (Exception ex)
+            {
+                var CustErr = new MessageDialog($"{ex.Message}\n{ex.StackTrace}\n{ex.Source}\n\n{selectedIndex}");
+                CustErr.Commands.Add(new UICommand("Close"));
+                CustErr.ShowAsync();
+            }
+        }
+
 
         private void DeleteBookmark_Click(object sender, RoutedEventArgs e)
         {
@@ -326,12 +374,28 @@ namespace _9Anime_PWA
             }
         }
         bool IsHoldingPressed = false;
-        private void BookmarksList_Holding(object sender, HoldingRoutedEventArgs e)
+        private async void BookmarkItem_Holding(object sender, HoldingRoutedEventArgs e)
         {
-           // IsHoldingPressed = true;
-            BookmarkRightClick.ShowAt(MainView, e.GetPosition(MainView));
-            //IsHoldingPressed = false;
-           // BookmarkFlyout.ShowAt(BookmarkButton);
+            FrameworkElement senderElement = sender as FrameworkElement;
+            BookmarksList.SelectedItem = senderElement.DataContext;
+
+            selectedIndex = BookmarksList.SelectedIndex;
+
+            var test = BookmarksList.SelectedItem as PageInfo;
+
+
+            MessageDialog dialog = new MessageDialog($"{test.WebpageTitle}\n\nRemove this bookmark?");
+            dialog.Commands.Add(new UICommand("Yes", null));
+            dialog.Commands.Add(new UICommand("No", null));
+            dialog.DefaultCommandIndex = 0;
+            dialog.CancelCommandIndex = 1;
+            var cmd = await dialog.ShowAsync();
+
+            if (cmd.Label == "Yes")
+            {
+
+                DeleteBookmark_Click();
+            }
         }
 
         private void BookmarkFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
@@ -341,5 +405,7 @@ namespace _9Anime_PWA
                 args.Cancel = true;
             }*/
         }
+
+
     }
 }
