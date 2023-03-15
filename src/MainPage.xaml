@@ -8,18 +8,22 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
-        <Flyout x:Name="BookmarkFlyout" LightDismissOverlayMode="Off" Closing="BookmarkFlyout_Closing">
-            <RelativePanel MaxWidth="300">
-                <TextBlock x:Name="DocumentTitleBox" RelativePanel.AlignLeftWithPanel="True" ScrollViewer.HorizontalScrollMode="Enabled" MaxWidth="350" RelativePanel.AlignRightWithPanel="True" Margin="0,0,0,5"/>
-                <Button x:Name="AddBookmarkBtn" RelativePanel.Below="DocumentTitleBox" Click="AddBookmarkBtn_Click">
+        <Flyout x:Name="BookmarkFlyout" LightDismissOverlayMode="On" Closing="BookmarkFlyout_Closing">
+            <RelativePanel HorizontalAlignment="Stretch" MaxWidth="350">
+                <Button x:Name="AddBookmarkBtn"  Click="AddBookmarkBtn_Click" Style="{ThemeResource FluentButtonAccentStyle}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Add" Margin="0,0,5,0"/>
                         <TextBlock Text="Bookmark"/>
                     </StackPanel>
                 </Button>
-                <TextBox x:Name="CurrentUrlBox" Text="{Binding Path=CurrentUrl, Mode=OneWay}" IsReadOnly="True" BorderBrush="Transparent" Background="Transparent" RelativePanel.AlignRightWith="DocumentTitleBox" RelativePanel.Below="DocumentTitleBox" RelativePanel.RightOf="AddBookmarkBtn" RelativePanel.AlignRightWithPanel="True" Margin="5,0,0,0"/>
-                <ListView x:Name="BookmarksList" ItemClick="BookmarksList_ItemClick" IsHoldingEnabled="True" IsItemClickEnabled="true" RelativePanel.Below="CurrentUrlBox" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
-                   
+                <Button x:Name="RefreshPage" Click="RefreshPage_Click" RelativePanel.RightOf="AddBookmarkBtn" Style="{ThemeResource FluentButtonAccentStyle}" Margin="5,0,0,0">
+                    <SymbolIcon Symbol="Refresh"/>
+                </Button>
+                <Button x:Name="SettingsPage" Click="SettingsPage_Click" RelativePanel.AlignRightWithPanel="True" RelativePanel.RightOf="RefreshPage" Style="{ThemeResource FluentButtonAccentStyle}" Margin="5,0,0,0">
+                    <SymbolIcon Symbol="Setting"/>
+                </Button>
+                <ListView x:Name="BookmarksList" ItemClick="BookmarksList_ItemClick" RelativePanel.Below="AddBookmarkBtn" IsHoldingEnabled="True" IsItemClickEnabled="true"  RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding WebpageTitle, Mode=OneWay}" Holding="BookmarkItem_Holding" RightTapped="BookmarkItem_RightTapped"/>
@@ -35,19 +39,167 @@
         </Flyout>
     </Page.Resources>
 
-    <Grid  >
+    <Grid>
+
+        <RelativePanel>
+            <RelativePanel x:Name="NavBar" 
+                           RelativePanel.AlignLeftWithPanel="True" 
+                           RelativePanel.AlignRightWithPanel="True"
+                           Background="{ThemeResource SystemAccentColorDark1}">
+
+                <TextBlock x:Name="DocumentTitleBox" 
+                           RelativePanel.AlignLeftWithPanel="True" 
+                            HorizontalAlignment="Stretch"
+                           
+                           RelativePanel.AlignRightWithPanel="True" 
+                           Margin="5,5,5,5"
+                           Style="{ThemeResource FluentLightTitleTextStyle}"/>
+
+                <Button x:Name="BackButton"
+                        Click="BackButton_Click"
+                        RelativePanel.AlignLeftWithPanel="True" 
+                        VerticalAlignment="Bottom"
+                        BorderBrush="Transparent"
+                        RelativePanel.Below="DocumentTitleBox"
+                        Margin="0,0,0,5"
+                        Style="{ThemeResource FluentButtonAccentStyle}">
+                    <Button.Background>
+                        <SolidColorBrush Color="Gray" Opacity="0.3"/>
+                    </Button.Background>
+                    <SymbolIcon Symbol="Back"></SymbolIcon>
+                </Button>
+                <Button x:Name="ForwardButton" 
+                        Click="ForwardButton_Click" 
+                        RelativePanel.RightOf="BackButton" 
+                        VerticalAlignment="Bottom" 
+                        BorderBrush="Transparent"
+                        Margin="5,0,0,0"
+                         RelativePanel.Below="DocumentTitleBox"
+                        Style="{ThemeResource FluentButtonAccentStyle}">
+                    <Button.Background>
+                        <SolidColorBrush Color="Gray" Opacity="0.3"/>
+                    </Button.Background>
+                    <SymbolIcon Symbol="Forward"></SymbolIcon>
+                </Button>
+                <TextBox x:Name="CurrentUrlBox" 
+                         Text="{Binding Path=CurrentUrl, Mode=OneWay}" 
+                         RelativePanel.RightOf="ForwardButton"
+                         RelativePanel.LeftOf="BookmarkButton"
+                         IsReadOnly="True" 
+                         BorderBrush="Transparent" 
+                         Background="Transparent"
+                         HorizontalAlignment="Stretch" 
+                         Margin="5,0,5,0"
+                          RelativePanel.Below="DocumentTitleBox"
+                         Style="{ThemeResource FluentTextBoxStyle}" Padding="12,6,12,10"/>
+
+                <Button x:Name="BookmarkButton"
+                        RelativePanel.AlignRightWithPanel="True" 
+                        Flyout="{x:Bind BookmarkFlyout}"
+                        HorizontalAlignment="Right" 
+                        BorderBrush="Transparent"
+                        Margin="0,0,0,0"
+                         RelativePanel.Below="DocumentTitleBox"
+                        Style="{ThemeResource FluentButtonAccentStyle}">
+                    <Button.Background>
+                        <SolidColorBrush Color="Gray" Opacity="0.3"/>
+                    </Button.Background>
+                    <SymbolIcon Symbol="Bookmarks"></SymbolIcon>
+                </Button>
+
+            </RelativePanel>
+
+
+            <ProgressBar x:Name="ProgBar"
+                         RelativePanel.Below="NavBar"
+                         HorizontalAlignment="Stretch" 
+                         RelativePanel.AlignLeftWithPanel="True"
+                         RelativePanel.AlignRightWithPanel="True"
+                         VerticalAlignment="Top" 
+                         Height="5" 
+                         IsIndeterminate="True" 
+                         Visibility="Collapsed" Foreground="{ThemeResource SystemAccentColor}"/>
+            <WebView x:Name="MainView" 
+                     RelativePanel.Below="ProgBar" 
+                     RelativePanel.AlignLeftWithPanel="True"
+                     RelativePanel.AlignRightWithPanel="True"
+                     RelativePanel.AlignBottomWithPanel="True" 
+                     Source="https:\\9anime.me" 
+                     FrameNavigationCompleted="MainView_FrameNavigationCompleted" 
+                     NavigationStarting="MainView_NavigationStarting" 
+                     ContainsFullScreenElementChanged="MainView_ContainsFullScreenElementChanged" 
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch"/>
+            <Grid x:Name="SettingsGrid" 
+                  RelativePanel.AlignLeftWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True" 
+                  RelativePanel.AlignBottomWithPanel="True"
+                  RelativePanel.AlignTopWithPanel="True" 
+                  Visibility="Collapsed"
+                  Background="#FF1E1E1E" >
+                <RelativePanel x:Name="SettingPanel" >
+                    <Button x:Name="CloseBtn" 
+                            Click="CloseBtn_Click" 
+                            FontSize="12"
+                            Content="&#xE106;" 
+                            FontFamily="Segoe MDL2 Assets"
+                            RelativePanel.AlignRightWithPanel="True"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right"
+                            Margin="0,4,4,0"
+                            Background="Transparent"
+                            BorderBrush="{x:Null}"
+                            Foreground="{ThemeResource SystemAccentColorLight1}"/>
+
+                    <TextBlock x:Name="SettingsHeader"
+                               Text="Settings"
+                               FontSize="20"
+                               HorizontalAlignment="Center"
+                               RelativePanel.AlignTopWithPanel="True"
+                               RelativePanel.AlignHorizontalCenterWithPanel="True" 
+                               Style="{ThemeResource FluentLightTitleTextStyle}"
+                               Margin="0,10,0,0"/>
+                    <CheckBox x:Name="SettingsNavBarColour" 
+                              Content="Set Navigation Bar as Accent Colour"
+                              RelativePanel.Below="SettingsHeader"
+                              Visibility="Collapsed"
+                              Margin="10,30,0,0"/>
+
+                    <TextBlock x:Name="SettingsManageBookmark"
+                               Text="Manage Bookmarks"
+                               RelativePanel.AlignHorizontalCenterWithPanel="True"
+                               RelativePanel.Below="SettingsNavBarColour"
+                               Style="{ThemeResource FluentLightTitleTextStyle}"
+                               Margin="10,30,0,0"/>
+                    <TextBlock x:Name="SettingsBookmarkInfo"
+                               Text="Here you can Export or Import your bookmarks to a folder of your choice"
+                               RelativePanel.Below="SettingsManageBookmark"
+                               TextWrapping="Wrap" Margin="10,0,10,0" Foreground="Gray"/>
+                    <Button x:Name="ExportBookmarks"
+                            Click="ExportBookmarks_Click"
+                            Content="Export"
+                            RelativePanel.Below="SettingsBookmarkInfo"
+                             Style="{ThemeResource FluentButtonAccentStyle}" Margin="10,10,0,0"/>
+                    <Button x:Name="ImportBookmarks"
+                            Click="ImportBookmarks_Click"
+                            Content="Import"
+                            RelativePanel.Below="SettingsBookmarkInfo"
+                            RelativePanel.RightOf="ExportBookmarks"
+                             Style="{ThemeResource FluentButtonAccentStyle}" Margin="10,10,0,0"/>
+
+                    <Button x:Name="RemoveAllBookmarks"
+                            Click="RemoveAllBookmarks_Click"
+                            Content="Remove All"
+                            RelativePanel.Below="SettingsBookmarkInfo"
+                            RelativePanel.AlignRightWithPanel="True"
+                            Background="DarkRed"
+                             Style="{ThemeResource FluentButtonAccentStyle}" Margin="10,10,10,0"/>
+
+                </RelativePanel>
+            </Grid>
 
 
 
-
-        <WebView x:Name="MainView" Source="https:\\9anime.me" FrameNavigationCompleted="MainView_FrameNavigationCompleted"  NavigationStarting="MainView_NavigationStarting" ContainsFullScreenElementChanged="MainView_ContainsFullScreenElementChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        <Button x:Name="BookmarkButton" Flyout="{x:Bind BookmarkFlyout}" VerticalAlignment="Bottom" BorderBrush="Transparent" Margin="10,0,0,10">
-            <Button.Background>
-                <SolidColorBrush Color="Gray" Opacity="0.3"/>
-            </Button.Background>
-            <SymbolIcon Symbol="Bookmarks"></SymbolIcon>
-        </Button>
-
-        <ProgressBar x:Name="ProgBar" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="5" IsIndeterminate="True" Visibility="Collapsed"/>
+        </RelativePanel>
     </Grid>
 </Page>

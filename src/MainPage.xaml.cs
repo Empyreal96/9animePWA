@@ -10,6 +10,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -41,7 +43,7 @@ namespace _9Anime_PWA
         public string CurrentUrl { get; set; }
         public string CurrentDocumentTitle { get; set; }
         bool IsFirstStart = true;
-        ApplicationDataContainer localsettings = ApplicationData.Current.LocalSettings;
+        ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
         public MainPage()
         {
             this.InitializeComponent();
@@ -50,6 +52,7 @@ namespace _9Anime_PWA
             view.TryEnterFullScreenMode();
 
             InitMainViewEvents();
+           // InitSettingsPageEvents();
             ReadSavedBookmarks();
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
@@ -114,15 +117,21 @@ namespace _9Anime_PWA
         private void MainView_ContainsFullScreenElementChanged(WebView sender, object args)
         {
 
-            if (BookmarkButton.Visibility == Visibility.Visible)
+            if (NavBar.Visibility == Visibility.Visible)
             {
-                BookmarkButton.Visibility = Visibility.Collapsed;
+                NavBar.Visibility = Visibility.Collapsed;
+                RelativePanel.SetAlignTopWithPanel(MainView, true);
+
+
             }
             else
             {
-                BookmarkButton.Visibility = Visibility.Visible;
+                NavBar.Visibility = Visibility.Visible;
 
+                RelativePanel.SetAlignTopWithPanel(MainView, false);
             }
+
+
         }
 
 
@@ -137,15 +146,18 @@ namespace _9Anime_PWA
             else
             {
                 SavedBookmarks = new ObservableCollection<PageInfo>();
-               
-            }
 
+            }
+            if (BookmarksList.Items.Count != 0)
+            {
+                BookmarksList.Items.Clear();
+            }
             foreach (var item in SavedBookmarks)
             {
                 BookmarksList.Items.Add(item);
             }
 
-           // BookmarksList.ItemsSource = SavedBookmarks;
+            // BookmarksList.ItemsSource = SavedBookmarks;
         }
 
         public async void SaveBookmarks()
@@ -171,7 +183,7 @@ namespace _9Anime_PWA
                     WebpageUrl = webpage
                 });
 
-                
+
                 foreach (var item in SavedBookmarks)
                 {
                     BookmarksList.Items.Add(item);
@@ -195,7 +207,7 @@ namespace _9Anime_PWA
         private void BookmarksList_ItemClick(object sender, ItemClickEventArgs e)
         {
             selectedIndex = BookmarksList.SelectedIndex;
-         Title = (e.ClickedItem as PageInfo).WebpageTitle;
+            Title = (e.ClickedItem as PageInfo).WebpageTitle;
             PageUrl = (e.ClickedItem as PageInfo).WebpageUrl;
 
             MainView.Navigate(new Uri(PageUrl));
@@ -278,11 +290,6 @@ namespace _9Anime_PWA
 
 
 
-
-
-
-
-
         private void LoadingBarEnabled(bool value)
         {
             if (value == true)
@@ -301,7 +308,7 @@ namespace _9Anime_PWA
 
 
         int selectedIndex;
-       
+
 
         private async void BookmarkItem_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
@@ -327,9 +334,9 @@ namespace _9Anime_PWA
             }
         }
 
-      
 
-        private void DeleteBookmark_Click()
+
+        private async void DeleteBookmark_Click()
         {
             try
             {
@@ -347,12 +354,12 @@ namespace _9Anime_PWA
             {
                 var CustErr = new MessageDialog($"{ex.Message}\n{ex.StackTrace}\n{ex.Source}\n\n{selectedIndex}");
                 CustErr.Commands.Add(new UICommand("Close"));
-                CustErr.ShowAsync();
+                await CustErr.ShowAsync();
             }
         }
 
 
-        private void DeleteBookmark_Click(object sender, RoutedEventArgs e)
+        private async void DeleteBookmark_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -370,9 +377,12 @@ namespace _9Anime_PWA
             {
                 var CustErr = new MessageDialog($"{ex.Message}\n{ex.StackTrace}\n{ex.Source}\n\n{selectedIndex}");
                 CustErr.Commands.Add(new UICommand("Close"));
-                CustErr.ShowAsync();
+                await CustErr.ShowAsync();
             }
         }
+
+
+
         bool IsHoldingPressed = false;
         private async void BookmarkItem_Holding(object sender, HoldingRoutedEventArgs e)
         {
@@ -406,6 +416,174 @@ namespace _9Anime_PWA
             }*/
         }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainView.CanGoBack)
+            {
+                MainView.GoBack();
+            }
+        }
 
+        private void ForwardButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainView.CanGoForward)
+            {
+                MainView.GoForward();
+            }
+        }
+
+        private void RefreshPage_Click(object sender, RoutedEventArgs e)
+        {
+            MainView.Refresh();
+        }
+
+
+        private async void SaveColourSetting(string accentType) // Default or System
+        {
+                localSettings.Values["NavBarColour"] = accentType;
+              
+        }
+
+        private async void LoadColourSetting()
+        {
+            var savedColour = localSettings.Values["NavBarColour"] as string;
+
+            if (savedColour == "System")
+            {
+                var uiSettings = new Windows.UI.ViewManagement.UISettings();
+                Windows.UI.Color accentColor = uiSettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+
+                NavBar.Background = new SolidColorBrush(accentColor);
+            } else
+            {
+                NavBar.Background = new SolidColorBrush(Colors.Gray);
+
+                
+            }
+        }
+
+        private void InitSettingsPageEvents()
+        {
+
+            LoadColourSetting();
+
+            SettingsNavBarColour.Checked += SettingsNavBarColour_Checked;
+
+
+        }
+
+        private void SettingsNavBarColour_Checked(object sender, RoutedEventArgs e)
+        {
+            var uiSettings = new Windows.UI.ViewManagement.UISettings();
+            Windows.UI.Color accentColor = uiSettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+
+           
+
+
+            if (SettingsNavBarColour.IsChecked == true)
+            {
+                SaveColourSetting("System");
+                NavBar.Background = new SolidColorBrush(accentColor);
+            } else
+            {
+                SaveColourSetting("Default");
+                NavBar.Background = new SolidColorBrush(Colors.Gray);
+            }
+        }
+
+        private async void ExportBookmarks_Click(object sender, RoutedEventArgs e)
+        {
+            FolderPicker picker = new FolderPicker();
+            picker.FileTypeFilter.Add(".bin");
+
+            var ExportFolder = await picker.PickSingleFolderAsync();
+            if (ExportFolder != null)
+            {
+                var bookmarkFile = await ApplicationData.Current.LocalFolder.TryGetItemAsync("Bookmarks.bin");
+                if (bookmarkFile != null)
+                {
+                    try
+                    {
+                        StorageFile Bookmarks = bookmarkFile as StorageFile;
+                        await Bookmarks.CopyAsync(ExportFolder, "9anime_Bookmarks.bin", NameCollisionOption.GenerateUniqueName);
+                    }
+                    catch (Exception ex)
+                    {
+                        var CustErr = new MessageDialog($"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
+                        CustErr.Commands.Add(new UICommand("Close"));
+                        await CustErr.ShowAsync();
+                    }
+                    var CustErr2 = new MessageDialog($"Exported to \"{ExportFolder.Path}\" successfully");
+                    CustErr2.Commands.Add(new UICommand("Close"));
+                    await CustErr2.ShowAsync();
+
+                }
+                else
+                {
+                    var CustErr = new MessageDialog($"No saved bookmarks found");
+                    CustErr.Commands.Add(new UICommand("Close"));
+                    await CustErr.ShowAsync();
+                }
+            }
+        }
+
+        private async void ImportBookmarks_Click(object sender, RoutedEventArgs e)
+        {
+            FileOpenPicker picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".bin");
+
+            var selectedFile = await picker.PickSingleFileAsync();
+            if (selectedFile != null)
+            {
+                try
+                {
+                    await selectedFile.CopyAsync(ApplicationData.Current.LocalFolder, "Bookmarks.bin", NameCollisionOption.ReplaceExisting);
+                }
+                catch (Exception ex)
+                {
+                    var CustErr = new MessageDialog($"Failed importing bookmark\n\n{ex.Message}");
+                    CustErr.Commands.Add(new UICommand("Close"));
+                    await CustErr.ShowAsync();
+                }
+                ReadSavedBookmarks();
+                var CustErr2 = new MessageDialog($"Imported {selectedFile.DisplayName} successfully");
+                CustErr2.Commands.Add(new UICommand("Close"));
+                await CustErr2.ShowAsync();
+            }
+        }
+
+        private async void RemoveAllBookmarks_Click(object sender, RoutedEventArgs e)
+        {
+            MessageDialog dialog = new MessageDialog($"Remove all saved bookmarks?");
+            dialog.Commands.Add(new UICommand("Yes", null));
+            dialog.Commands.Add(new UICommand("No", null));
+            dialog.DefaultCommandIndex = 0;
+            dialog.CancelCommandIndex = 1;
+            var cmd = await dialog.ShowAsync();
+
+            if (cmd.Label == "Yes")
+            {
+                var savedBookmarks = await ApplicationData.Current.LocalFolder.TryGetItemAsync("Bookmarks.bin");
+                if (savedBookmarks != null)
+                {
+                    await savedBookmarks.DeleteAsync();
+
+
+                    var CustErr2 = new MessageDialog($"Removed all bookmarks successfully");
+                    CustErr2.Commands.Add(new UICommand("Close"));
+                    await CustErr2.ShowAsync();
+                }
+            }
+        }
+
+        private void SettingsPage_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsGrid.Visibility = Visibility.Visible;
+        }
+
+        private void CloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsGrid.Visibility = Visibility.Collapsed;
+        }
     }
 }
